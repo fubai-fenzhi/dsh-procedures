@@ -1,0 +1,6 @@
+- insert:
+    - id: dsh-procedures
+      name: dsh-procedures
+      config:
+        autoInbox: false
+        hintOnError: true

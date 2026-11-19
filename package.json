@@ -1,0 +1,57 @@
+{
+  "name": "dsh-procedures",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "File-based experience cards for DSH and other agents: conditional hook, failure hints, stats, rarity, global library, and a portable kit.",
+  "license": "MIT",
+  "author": "MiHjy12138",
+  "homepage": "https://github.com/fubai-fenzhi/dsh-procedures#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fubai-fenzhi/dsh-procedures.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fubai-fenzhi/dsh-procedures/issues"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "agents",
+    "procedures",
+    "memory",
+    "hooks",
+    "experience-cards"
+  ],
+  "engines": {
+    "node": ">=18",
+    "dsh": ">=0.2.1-rc.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "files": [
+    "index.js",
+    "lib/*.mjs",
+    "bin/*.mjs",
+    "bench/*.mjs",
+    "portable",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "icon.svg",
+    "README.md",
+    "README.en.md",
+    "CHANGELOG.md",
+    "PRO.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}
