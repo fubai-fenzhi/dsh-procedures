@@ -1,0 +1,74 @@
+{
+  "format": 1,
+  "title": {
+    "en": "DSH Procedures",
+    "zh": "DSH 经验卡库"
+  },
+  "description": {
+    "en": "File-based experience cards for DSH agents: a conditional hook, one-line failure hints, hit stats, rarity, and a portable kit for other agents.",
+    "zh": "给 DSH agent 的文件化经验卡：条件钩子、报错时只注入一行指针、命中统计、稀有度，以及给其他 agent 的通用本地版。"
+  },
+  "metadata": {
+    "categories": {
+      "memory": {
+        "title": {
+          "en": "Memory",
+          "zh": "记忆"
+        }
+      },
+      "tooling": {
+        "title": {
+          "en": "Tooling",
+          "zh": "工具"
+        }
+      }
+    },
+    "labels": {},
+    "sortKeys": {}
+  },
+  "plugins": [
+    {
+      "name": "dsh-procedures",
+      "title": {
+        "en": "Experience Cards",
+        "zh": "经验卡库"
+      },
+      "description": {
+        "en": "Turn repeated agent mistakes into small per-workspace cards. When a matching tool error appears, inject only a one-line pointer to the card, never the whole card.",
+        "zh": "把 agent 反复踩的坑变成小卡片；工具报错命中时只注入一行“读这张卡”的指针，不注入整卡。"
+      },
+      "author": "MiHjy12138",
+      "homepage": "https://github.com/fubai-fenzhi/dsh-procedures#readme",
+      "repository": {
+        "url": "https://github.com/fubai-fenzhi/dsh-procedures"
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJQcm9jZWR1cmVzIj4KICA8cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxNCIgZmlsbD0iIzFENEVEOCIvPgogIDxyZWN0IHg9IjEzIiB5PSIxOSIgd2lkdGg9IjMwIiBoZWlnaHQ9IjM0IiByeD0iNCIgZmlsbD0iIzkzQzVGRCIgdHJhbnNmb3JtPSJyb3RhdGUoLTggMTMgMTkpIi8+CiAgPHJlY3QgeD0iMjAiIHk9IjEzIiB3aWR0aD0iMzAiIGhlaWdodD0iMzYiIHJ4PSI0IiBmaWxsPSIjRkZGRkZGIi8+CiAgPHJlY3QgeD0iMjYiIHk9IjIxIiB3aWR0aD0iMTgiIGhlaWdodD0iMyIgcng9IjEuNSIgZmlsbD0iIzFFM0E4QSIvPgogIDxyZWN0IHg9IjI2IiB5PSIyOCIgd2lkdGg9IjE0IiBoZWlnaHQ9IjMiIHJ4PSIxLjUiIGZpbGw9IiM2MEE1RkEiLz4KICA8cmVjdCB4PSIyNiIgeT0iMzUiIHdpZHRoPSIxNiIgaGVpZ2h0PSIzIiByeD0iMS41IiBmaWxsPSIjNjBBNUZBIi8+CiAgPGNpcmNsZSBjeD0iNDYiIGN5PSI0NiIgcj0iOSIgZmlsbD0iI0Y1OUUwQiIvPgogIDxwYXRoIGQ9Ik00MiA0NmwzIDMgNS02IiBmaWxsPSJub25lIiBzdHJva2U9IiNGRkZGRkYiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+Cg==",
+      "metadata": {
+        "category": "memory",
+        "keywords": [
+          "procedures",
+          "experience",
+          "memory",
+          "traps",
+          "error",
+          "skills",
+          "dsh"
+        ],
+        "labels": [],
+        "sortKeys": {}
+      },
+      "versions": [
+        {
+          "version": "1.0.0",
+          "publishTimestamp": 1795132099,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.3"
+          }
+        }
+      ]
+    }
+  ]
+}
