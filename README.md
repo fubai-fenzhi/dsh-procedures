@@ -1,12 +1,12 @@
 # dsh-procedures
 
-> 给 agent 开一个“抽卡”外挂：踩过的坑变成卡，失败时自动抽一张，卡库按需读。
+> 给 agent 开一个“抽卡”外挂：踩过的坑变成卡，失败时自动抽一张，卡库按需读；命中即由钩子本地提示，约省 50%~85% token。
 
 文件化经验卡 + DSH 条件钩子。目标只有一个：让 agent 不再重复踩同一个坑，同时不把卡片常驻进上下文。
 
 [English](README.en.md) | [Changelog](CHANGELOG.md)
 
-当前版本：**1.0.0**（DSH 插件 + 通用本地版；市场候选版）。
+当前版本：**1.2.1**（DSH 插件 + 通用本地版；市场候选版）。
 
 ## 30 秒上手
 
@@ -39,9 +39,27 @@
 - **免费核心**：单机经验卡（本地卡、条件钩子、失败提示、CLI、Skill），永远 MIT 免费。
 - **Pro（规划中，未发布）**：跨机器同步、团队共享卡库、用量/复发面板。核心不设收费墙，Pro 是独立服务层。详见 [PRO.md](PRO.md)。
 
+## 从市场安装（DSH）
+
+DSH 没有官方商店，市场是“添加索引源”的模式。把下面这个索引 URL 加进插件市场，就能搜到并安装 `dsh-procedures`：
+
+```text
+https://ghproxy.net/https://raw.githubusercontent.com/fubai-fenzhi/dsh-procedures/main/index.json
+```
+
+（GitHub raw 在国内部分网络会被重置；这是可用镜像，也可换 `https://fastly.jsdelivr.net/gh/fubai-fenzhi/dsh-procedures@main/index.json`。）
+
+也可以直接用 npm：
+
+```bash
+npm i dsh-procedures
+```
+
+市场条目：`dsh-procedures`，`engines.dsh >= 0.2.1-rc.3`，MIT。
+
 ## 当前安装状态
 
-- 已安装到 profile `desktop`：entry `include:dsh-procedures`，bundle `dsh-procedures@1.0.0`。
+- 已安装到 profile `desktop`：entry `include:dsh-procedures`，本地源码版（市场安装走 npm 最新）。
 - 本工作区 `procedures/` 有 9 张卡；钩子已在当前会话生效。
 - 默认 `autoInbox: false`；要恢复自动写入，在 profile 的 `cordis.patch.yml` 里覆盖 `autoInbox: true`（见“配置”）。
 - 安装方式：`plugin_manager` 的 `install_bundle`。本地目录以 junction 链进 profile，改工作区文件即改安装内容（重启/重载后生效）；**`dsh-procedures/` 目录必须保留，删掉它等于删掉插件代码**。
@@ -58,6 +76,50 @@ node portable/setup.mjs --workspace E:\YourProject --write
 - 之后用 `bin/procedures.mjs` 检索/审计；harness 有 post-tool hook 时，把 `{tool,error}` 交给 `bin/hint.mjs --stdin`，把 stdout 追加到上下文。
 - **通用版没有自动拦截/注入**；自动提示、自动 inbox、stats、复发统计仍是 DSH 插件专属。详见 [portable/README.md](portable/README.md)。
 - 分享：压缩整个 `dsh-procedures/` 目录给对方，只需 Node ≥ 18，不需要 DSH。
+
+## 跨机同步（免费自带 · 自托管）
+
+`sync` 把**全局经验库**存进你自己的**私有 GitHub 仓库**，多台机器 `pull/push` 同步；不经过任何第三方服务器。
+
+```bash
+# 一次性配置（token 只需该私有仓库的 Contents 读写）
+node bin/procedures.mjs sync init --repo <owner>/<private-repo> --token <github-token> --create
+
+# 日常
+node bin/procedures.mjs sync push     # 本机 → 远端
+node bin/procedures.mjs sync pull     # 远端 → 本机
+node bin/procedures.mjs sync          # pull 后 push
+node bin/procedures.mjs sync status
+```
+
+- 只同步全局库（`~/.dsh/procedures/global`）的卡 + `global-stats.json`；工作区 `procedures/` 的私有卡不动。
+- 统计按卡合并：hits 取大、时间取晚，不会互相覆盖。
+- token 从 `DSH_PROCEDURES_SYNC_TOKEN` 或 `~/.dsh/procedures/sync.json` 读；建议 fine-grained token，只给这个私有仓库 Contents 读写。
+- 托管版 / 团队共享 / 用量面板是 Pro 规划，见 [PRO.md](PRO.md)。
+
+## 社区卡库（Community，默认开）
+
+插件默认启用社区卡库支持：
+
+- 钩子里会提示：缺卡可 `community pull`，有值得分享的卡可 `contribute`（先预览、确认后发）。
+- 拉取精选卡到全局库（公开仓库、只读，不覆盖你已有的卡）：
+
+```bash
+node bin/procedures.mjs community pull
+node bin/procedures.mjs community status
+```
+
+- 贡献自己的卡（默认只预览；确认后加 `--yes` 才会在社区仓库开 issue）：
+
+```bash
+node bin/procedures.mjs contribute          # 预览
+node bin/procedures.mjs contribute --yes    # 提交（需要 GitHub token）
+```
+
+- 只提交**你本地已有的卡**，不会上传 `_inbox.md` 里的原始报错；维护者审核后合并进 `cards/`，所有人再 `community pull`。
+- 社区仓库：https://github.com/fubai-fenzhi/dsh-procedures-community
+- token：`DSH_PROCEDURES_CONTRIBUTE_TOKEN`（或 `--token`），需要 issue 写权限；只读拉取不需要 token。
+- 关掉：在 profile 的 `cordis.patch.yml` 覆盖 `community: false`。
 
 ## 目录
 
@@ -248,6 +310,9 @@ $env:DEEPSEEK_API_KEY = "sk-..."
 | `globalStatsFile` | `""` | 全局 stats 路径；空=`~/.dsh/procedures/global-stats.json` |
 | `resolutionWindow` | `5` | 命中后观察多少个工具结果 |
 | `resolutionSeconds` | `120` | 命中后观察多少秒 |
+| `community` | `true` | 启用社区卡库支持（钩子提示 + `community pull`） |
+| `communityRepo` | `fubai-fenzhi/dsh-procedures-community` | 社区卡库仓库 |
+| `communitySubmit` | `ask` | 贡献方式：`off` 不提示 / `ask` 手动确认（默认）/ `auto` 预留 |
 
 要覆盖配置，在 profile 的 `cordis.patch.yml` 里加一条同 id 行（注意：匹配的 override 会替换**整个** config，没写的键会回落到默认值，不会继承 bundle 里的值）：
 
@@ -292,7 +357,7 @@ $env:DEEPSEEK_API_KEY = "sk-..."
 
 ## 发布
 
-当前是 **1.0.0 发布候选版**，还没有执行 npm publish / GitHub push / 市场提交。
+当前是 **1.2.1** 本地版本；1.2.0 已发布到 npm，1.2.1 待发布。
 
 - 包名 `dsh-procedures` 在 npm 未被占用；`private` 已移除，`engines.dsh >= 0.2.1-rc.3`、`author`、`homepage`、`publishConfig` 已补。
 - `npm pack` 实测 25 个文件、约 36 KB；`portable/`、`bin/hint.mjs`、locale/icon、CHANGELOG 都在包里。
@@ -309,7 +374,7 @@ npm publish --access public
 然后：
 
 1. 把 `dsh-procedures/` 同步到 GitHub 仓库根目录（当前仓库还是旧的方法论 + tools；本机没 git，需要你 push 或用 API）。
-2. 提交到第三方索引（dpharness / dshmarket 等），或在自有 index JSON 里加一条 `dsh-procedures@1.0.0`。
+2. 提交到第三方索引（dpharness / dshmarket 等），或在自有 index JSON 里加一条 `dsh-procedures`。
 3. 用 `npm pack` 解压后的目录做一次干净 `install_bundle` 冒烟测试（发布前已在本机执行）。
 
 ## 关闭与回滚

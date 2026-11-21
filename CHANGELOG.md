@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.2.1
+
+- Metadata: author/copyright updated to `fubai-fenzhi` (`package.json`, market `index.json`, `LICENSE`).
+- No runtime changes.
+
+## 1.2.0
+
+- Community card library, enabled by default: the hook mentions `community pull` / `contribute`; `community pull` downloads curated cards from the public community repo; `contribute` previews local cards and opens issues only with `--yes`.
+- Config: `community` (default true), `communityRepo`, `communitySubmit` (default `ask`). No automatic upload; raw `_inbox.md` errors are never sent.
+- Docs: community sections in both READMEs.
+
+## 1.1.0
+
+- `procedures sync init|pull|push|status`: self-hosted cross-machine sync of the global card library and stats through a private GitHub repo (no server).
+- Stats merge keeps larger counts and later timestamps.
+- Hook text: stop after two consecutive failures; load the related Skill instead of a third blind retry.
+- Docs: README sync section and roadmap update.
+
+## 1.0.2
+
+- Docs: use the ghproxy mirror as the market index URL in both READMEs (GitHub raw can be reset on some networks).
+- No runtime changes.
+
+## 1.0.1
+
+- Docs: add a self-hosted plugin market index (`index.json`) and an install-from-market section to both READMEs.
+- No runtime changes.
+
 ## 1.0.0
 
 - Release candidate: publishable package metadata (`private` removed, `engines.dsh`, author/homepage, publishConfig).

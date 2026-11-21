@@ -2,7 +2,7 @@
 
 File-based experience cards for DeepSeek Harness (DSH) and other agents.
 
-> Turn repeated agent mistakes into small per-workspace cards. When a matching tool error appears, inject only a one-line pointer — never the whole card.
+> Turn repeated agent mistakes into small per-workspace cards. When a matching tool error appears, inject only a one-line pointer — never the whole card. Resolved locally on a hit, with roughly 50–85% fewer tokens.
 
 [中文 README](README.md) | [Portable kit](portable/README.md) | [Changelog](CHANGELOG.md) | [Pro (planned)](PRO.md)
 
@@ -23,9 +23,71 @@ File-based experience cards for DeepSeek Harness (DSH) and other agents.
 
 Not included: tool registration, vector search, full-card injection, auto-promotion, auto-execution of spell code.
 
+## Install from the market
+
+DSH has no official store; its plugin market works by adding an index. Add this index URL in the plugin market to discover and install `dsh-procedures`:
+
+```text
+https://ghproxy.net/https://raw.githubusercontent.com/fubai-fenzhi/dsh-procedures/main/index.json
+```
+
+(GitHub raw can be reset on some networks; this mirror works. Alternative: `https://fastly.jsdelivr.net/gh/fubai-fenzhi/dsh-procedures@main/index.json`.)
+
+Or install from npm directly:
+
+```bash
+npm i dsh-procedures
+```
+
+Market entry: `dsh-procedures`, `engines.dsh >= 0.2.1-rc.3`, MIT.
+
+## Cross-machine sync (free, self-hosted)
+
+`sync` keeps your **global** card library in your own **private GitHub repo** and syncs between machines with `pull`/`push` — no third-party server.
+
+```bash
+# one-time setup (token only needs Contents read/write on that private repo)
+node bin/procedures.mjs sync init --repo <owner>/<private-repo> --token <github-token> --create
+
+# daily
+node bin/procedures.mjs sync push
+node bin/procedures.mjs sync pull
+node bin/procedures.mjs sync
+node bin/procedures.mjs sync status
+```
+
+- Syncs only the global library (`~/.dsh/procedures/global`) plus `global-stats.json`; workspace-local cards stay untouched.
+- Stats merge per card (larger hits, later timestamps) instead of overwriting.
+- Token comes from `DSH_PROCEDURES_SYNC_TOKEN` or `~/.dsh/procedures/sync.json`; prefer a fine-grained token limited to that private repo.
+- Hosted sync / team sharing / dashboard are planned Pro features; see [PRO.md](PRO.md).
+
+## Community library (on by default)
+
+The plugin enables community cards by default:
+
+- The hook mentions `community pull` (fill gaps) and `contribute` (preview first).
+- Pull curated cards into the global library (public repo, read-only, never overwrites existing cards):
+
+```bash
+node bin/procedures.mjs community pull
+node bin/procedures.mjs community status
+```
+
+- Contribute local cards (preview by default; add `--yes` to open issues):
+
+```bash
+node bin/procedures.mjs contribute
+node bin/procedures.mjs contribute --yes
+```
+
+- Only cards you already have locally are sent — never raw `_inbox.md` errors. The maintainer reviews and merges into `cards/`; everyone pulls them with `community pull`.
+- Community repo: https://github.com/fubai-fenzhi/dsh-procedures-community
+- Token: `DSH_PROCEDURES_CONTRIBUTE_TOKEN` (or `--token`) with issue write access; read-only pulls need no token.
+- Disable: override `community: false` in the profile `cordis.patch.yml`.
+
 ## Install (DSH)
 
-The package is a DSH bundle (`dsh.bundle.patch` in `package.json`). Install `dsh-procedures@1.0.0` through Plugin Manager or a market index. It declares `engines.dsh >= 0.2.1-rc.3`.
+The package is a DSH bundle (`dsh.bundle.patch` in `package.json`). Install `dsh-procedures` through Plugin Manager or a market index. It declares `engines.dsh >= 0.2.1-rc.3`.
 
 The bundle inserts row id `dsh-procedures` with `autoInbox: false` and `hintOnError: true`.
 

@@ -37,7 +37,7 @@
         "en": "Turn repeated agent mistakes into small cards. A hit injects only a one-line pointer and is resolved locally — roughly 50–85% fewer tokens.",
         "zh": "把 agent 反复踩的坑变成小卡片；命中时只注入一行提示、由钩子本地解决，约省 50%~85% token。"
       },
-      "author": "MiHjy12138",
+      "author": "fubai-fenzhi",
       "homepage": "https://github.com/fubai-fenzhi/dsh-procedures#readme",
       "repository": {
         "url": "https://github.com/fubai-fenzhi/dsh-procedures"

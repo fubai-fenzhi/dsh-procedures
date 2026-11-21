@@ -12,6 +12,21 @@ import {
 } from '../lib/cards.mjs';
 import { synthesizeWithLlm } from '../lib/llm.mjs';
 import { hitsOf, outcomesOf, readStats } from '../lib/stats.mjs';
+import {
+  COMMUNITY_REPO,
+  communityPull,
+  communityStatus,
+  contribute,
+} from '../lib/community.mjs';
+import {
+  collectLocal,
+  createGitHubClient,
+  createUserRepo,
+  resolveSyncConfig,
+  syncPull,
+  syncPush,
+  writeSyncConfig,
+} from '../lib/sync.mjs';
 
 const USAGE = `procedures — file-based experience cards
 
@@ -22,9 +37,23 @@ Usage:
   procedures inbox add "<one line>" [--tool pwsh] [--dir procedures] [--json]
   procedures synthesize [--dir procedures] [--out procedures/_drafts] [--max 20] [--json]
   procedures synthesize --llm [--dry-run] [--context chat.md] [--max 5] [--base-url URL] [--model NAME] [--api-key KEY] [--json]
+  procedures sync init --repo <owner/name> [--token TOKEN] [--branch main] [--global-dir DIR] [--create]
+  procedures sync pull [--dry-run] [--json]
+  procedures sync push [--dry-run] [--json]
+  procedures sync status [--json]
+  procedures sync   # pull then push
+  procedures community pull [--global-dir DIR] [--repo OWNER/REPO] [--dry-run] [--json]
+  procedures community status [--json]
+  procedures contribute [--dir procedures] [--global-dir DIR] [--repo OWNER/REPO] [--yes] [--json]
+
+  community pulls curated cards from the public community repo into the global library.
+  contribute previews new local cards first; add --yes (and a GitHub token) to open issues.
 
   --llm uses an OpenAI-compatible /chat/completions endpoint (DeepSeek by default).
   Key is read from DEEPSEEK_API_KEY or DSH_PROCEDURES_API_KEY; --dry-run needs no key.
+
+  sync keeps the global card library in a private GitHub repo (no server). The token is
+  read from DSH_PROCEDURES_SYNC_TOKEN or the config file written by 'sync init'.
 
 Examples:
   procedures search "app.asar ENOENT"
@@ -275,6 +304,164 @@ async function commandSynthesize(flags) {
   return undefined;
 }
 
+async function commandSync(positional, flags) {
+  const sub = positional[1] ?? 'all';
+  const config = resolveSyncConfig(flags);
+  const json = flags.json === true;
+  const dryRun = flags['dry-run'] === true;
+
+  if (sub === 'init') {
+    if (!config.repo) return fail('sync init needs --repo <owner/name>');
+    if (!config.token) return fail('sync init needs --token <token> (or DSH_PROCEDURES_SYNC_TOKEN)');
+    const client = createGitHubClient({ repo: config.repo, branch: config.branch, token: config.token });
+    let info = null;
+    try {
+      info = await client.repoInfo();
+    } catch {
+      info = null;
+    }
+    if (!info) {
+      if (!flags.create) {
+        return fail(`repo ${config.repo} not found or no access; create a private repo and retry, or pass --create`);
+      }
+      await createUserRepo({ repo: config.repo, token: config.token });
+    }
+    writeSyncConfig(config.configFile, {
+      repo: config.repo,
+      branch: config.branch,
+      token: config.token,
+      globalDir: config.globalDir,
+      statsFile: config.statsFile,
+    });
+    if (json) {
+      printJson({ ok: true, repo: config.repo, branch: config.branch, configFile: config.configFile, globalDir: config.globalDir });
+    } else {
+      process.stdout.write(`sync: configured ${config.repo} -> ${config.configFile}\n`);
+      process.stdout.write(`sync: global library ${config.globalDir}\n`);
+    }
+    return undefined;
+  }
+
+  if (sub === 'status') {
+    const client = createGitHubClient({ repo: config.repo, branch: config.branch, token: config.token });
+    const root = await client.listDir('');
+    const cards = await client.listDir('cards');
+    const remote = [
+      ...root.filter((entry) => entry.type === 'file' && entry.name.endsWith('.md')),
+      ...cards.filter((entry) => entry.type === 'file' && entry.name.endsWith('.md')),
+    ];
+    const local = collectLocal(config.globalDir);
+    if (json) {
+      printJson({ repo: config.repo, branch: config.branch, remote: remote.length, local: Object.keys(local).length, globalDir: config.globalDir });
+    } else {
+      process.stdout.write(`repo: ${config.repo} (${config.branch})\n`);
+      process.stdout.write(`remote: ${remote.length} file(s)\n`);
+      process.stdout.write(`local: ${Object.keys(local).length} file(s) at ${config.globalDir}\n`);
+    }
+    return undefined;
+  }
+
+  if (!['pull', 'push', 'all'].includes(sub)) {
+    return fail(`unknown sync subcommand: ${sub} (init|pull|push|status)`);
+  }
+
+  const log = (line) => {
+    if (!json) process.stdout.write(`${line}\n`);
+  };
+
+  try {
+    if (sub === 'pull' || sub === 'all') {
+      const result = await syncPull({ config, dryRun, log });
+      if (json) printJson({ action: 'pull', ...result });
+      else process.stdout.write(`pulled: ${result.written} written, ${result.skipped} unchanged, ${result.total} remote${result.statsMerged ? ', stats merged' : ''}\n`);
+    }
+    if (sub === 'push' || sub === 'all') {
+      const result = await syncPush({ config, dryRun, log });
+      if (json) printJson({ action: 'push', ...result });
+      else process.stdout.write(`pushed: +${result.added} new, ${result.updated} updated, ${result.skipped} unchanged${result.statsChanged ? ', stats pushed' : ''}\n`);
+    }
+  } catch (error) {
+    return fail(String(error));
+  }
+  return undefined;
+}
+
+async function commandCommunity(positional, flags) {
+  const sub = positional[1] ?? 'pull';
+  const json = flags.json === true;
+  const sync = resolveSyncConfig(flags);
+  const repo = typeof flags.repo === 'string' ? flags.repo : COMMUNITY_REPO;
+  const token = typeof flags.token === 'string'
+    ? flags.token
+    : (process.env.DSH_PROCEDURES_CONTRIBUTE_TOKEN ?? sync.token);
+
+  if (sub === 'status') {
+    const result = await communityStatus({ globalDir: sync.globalDir, repo, token });
+    if (json) {
+      printJson(result);
+    } else {
+      process.stdout.write(`community: ${result.repo}\n`);
+      process.stdout.write(`remote: ${result.remote} card(s)\n`);
+      process.stdout.write(`local global: ${result.local} card(s)\n`);
+    }
+    return undefined;
+  }
+
+  if (sub !== 'pull') return fail(`unknown community subcommand: ${sub} (pull|status)`);
+
+  const dryRun = flags['dry-run'] === true;
+  try {
+    const result = await communityPull({
+      globalDir: sync.globalDir,
+      repo,
+      token,
+      dryRun,
+      log: (line) => {
+        if (!json) process.stdout.write(`${line}\n`);
+      },
+    });
+    if (json) printJson({ action: 'pull', repo, ...result });
+    else process.stdout.write(`pulled: ${result.added} added, ${result.skipped} existing, ${result.total} remote\n`);
+  } catch (error) {
+    return fail(String(error));
+  }
+  return undefined;
+}
+
+async function commandContribute(flags) {
+  const json = flags.json === true;
+  const sync = resolveSyncConfig(flags);
+  const repo = typeof flags.repo === 'string' ? flags.repo : COMMUNITY_REPO;
+  const token = typeof flags.token === 'string'
+    ? flags.token
+    : (process.env.DSH_PROCEDURES_CONTRIBUTE_TOKEN ?? sync.token);
+  const dryRun = flags.yes !== true;
+
+  try {
+    const result = await contribute({
+      dirs: [dataDir(flags), sync.globalDir],
+      repo,
+      token,
+      dryRun,
+      log: (line) => {
+        if (!json) process.stdout.write(`${line}\n`);
+      },
+    });
+    if (json) {
+      printJson({ action: 'contribute', repo, dryRun, ...result });
+    } else if (result.candidates === 0) {
+      process.stdout.write('no new card to contribute\n');
+    } else if (dryRun) {
+      process.stdout.write(`would submit ${result.candidates} card(s) to ${repo}; re-run with --yes to open issues\n`);
+    } else {
+      process.stdout.write(`submitted ${result.submitted} card(s) to ${repo}\n`);
+    }
+  } catch (error) {
+    return fail(String(error));
+  }
+  return undefined;
+}
+
 const { positional, flags } = parseArgs(process.argv.slice(2));
 const command = positional[0];
 
@@ -290,6 +477,12 @@ if (!command || flags.help || command === 'help') {
   commandInbox(positional, flags);
 } else if (command === 'synthesize') {
   await commandSynthesize(flags);
+} else if (command === 'sync') {
+  await commandSync(positional, flags);
+} else if (command === 'community') {
+  await commandCommunity(positional, flags);
+} else if (command === 'contribute') {
+  await commandContribute(flags);
 } else {
   fail(`unknown command: ${command}\n\n${USAGE}`);
 }

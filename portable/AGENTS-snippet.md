@@ -10,6 +10,8 @@
      Windows：Select-String -Path procedures\*.md,procedures\cards\*.md -Pattern "<任务词>"
      装了本工具：node "{{KIT_DIR}}/bin/procedures.mjs" search "<任务词>" --dir procedures
      用任务里的名词 / 报错原文搜，别搜「触发」这种字面词；别用 glob / 列目录挑卡。
+- 卡住时：同一动作连续失败两次就停。先查卡；没有卡就加载相关 skill；卡里写「去加载 xxx skill」时照做。别第三次盲试。
+- 多步「怎么做」优先照 skill 走；卡只放一步修复，不塞整段 SOP。
 - 踩坑当时：不是照卡走通、而是又试错了几轮 → 立刻往 procedures/_inbox.md 记一行（现象 + 一句话解法），别等收尾。
 - 收尾：只看 _inbox.md，够格的照 _模板.md 整理成卡；不扫全库、不复制卡正文。
 - 如果 harness 支持 post-tool hook：把 `{tool, error}` 传给

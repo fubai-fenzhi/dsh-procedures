@@ -30,7 +30,7 @@
 ## 分阶段
 
 - **P0（现在）**：免费核心上市场，攒用户、收反馈。
-- **P1**：`procedures sync` + 最简后端（GitHub OAuth + 私有仓库当存储，最省服务器）。
+- **P1（MVP 已实现）**：`procedures sync init|pull|push|status`（自托管，私有 GitHub 仓库当存储，零自建服务器）；文档见 README「跨机同步」。
 - **P2**：团队共享卡库 + 成员/权限。
 - **P3**：用量/复发面板 + 计费上线。
 

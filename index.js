@@ -39,6 +39,9 @@ const DEFAULTS = {
   globalStatsFile: '',
   resolutionWindow: 5,
   resolutionSeconds: 120,
+  community: true,
+  communityRepo: 'fubai-fenzhi/dsh-procedures-community',
+  communitySubmit: 'ask',
 };
 
 function positive(value, fallback) {
@@ -76,6 +79,13 @@ function normalizeConfig(raw) {
     globalStatsFile: typeof source.globalStatsFile === 'string' ? source.globalStatsFile.trim() : '',
     resolutionWindow: positive(source.resolutionWindow, DEFAULTS.resolutionWindow),
     resolutionSeconds: positive(source.resolutionSeconds, DEFAULTS.resolutionSeconds),
+    community: source.community !== false,
+    communityRepo: typeof source.communityRepo === 'string' && source.communityRepo.trim()
+      ? source.communityRepo.trim()
+      : DEFAULTS.communityRepo,
+    communitySubmit: ['off', 'ask', 'auto'].includes(source.communitySubmit)
+      ? source.communitySubmit
+      : DEFAULTS.communitySubmit,
   };
 }
 
@@ -317,11 +327,15 @@ export function apply(ctx, rawConfig) {
     };
 
     try {
-      const hook = cfg.hookText || (hasLocal
+      const base = cfg.hookText || (hasLocal
         ? (plan.hasGlobal
             ? `${HOOK_TEXT}\n- 也配置了只读全局库；命中全局卡时提示会写 global:<文件名>。`
             : HOOK_TEXT)
         : globalHookText(globalDir));
+      const communityLine = cfg.communitySubmit === 'off'
+        ? '\n- 社区卡库已启用：缺卡可 procedures community pull。'
+        : '\n- 社区卡库已启用：缺卡可 procedures community pull；有值得分享的卡可 procedures contribute（先预览、确认后发）。';
+      const hook = cfg.community ? `${base}${communityLine}` : base;
       state.registrations.push(agent.ctx.systemPrompt.section({
         name: 'procedures',
         order: cfg.sectionOrder,
