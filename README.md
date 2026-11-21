@@ -101,7 +101,7 @@ node bin/procedures.mjs sync status
 
 插件默认启用社区卡库支持：
 
-- 钩子里会提示：缺卡可 `community pull`，有值得分享的卡可 `contribute`（先预览、确认后发）。
+- 钩子提示：缺卡可 `community pull`，有值得分享的卡可 `contribute`。
 - 拉取精选卡到全局库（公开仓库、只读，不覆盖你已有的卡）：
 
 ```bash
@@ -109,14 +109,26 @@ node bin/procedures.mjs community pull
 node bin/procedures.mjs community status
 ```
 
-- 贡献自己的卡（默认只预览；确认后加 `--yes` 才会在社区仓库开 issue）：
+- 贡献策略（一次设置，之后可自动跑）：
+
+```bash
+node bin/procedures.mjs community policy          # 查看当前策略（默认 ask）
+node bin/procedures.mjs community policy ask      # 每次预览后手动确认
+node bin/procedures.mjs community policy auto     # 自动提交（脱敏 + 每日限额）
+node bin/procedures.mjs community policy off      # 关闭提交
+```
+
+- 手动贡献：`contribute` 默认只预览；`--yes` 提交一次；`--auto` 按校验/脱敏/限额提交：
 
 ```bash
 node bin/procedures.mjs contribute          # 预览
-node bin/procedures.mjs contribute --yes    # 提交（需要 GitHub token）
+node bin/procedures.mjs contribute --yes    # 提交一次
+node bin/procedures.mjs contribute --auto   # 自动模式（需要 token）
+node bin/procedures.mjs contribute --auto --cap 10
 ```
 
-- 只提交**你本地已有的卡**，不会上传 `_inbox.md` 里的原始报错；维护者审核后合并进 `cards/`，所有人再 `community pull`。
+- `auto` 的护栏：只提交**你本地已有的卡**（不传 `_inbox.md` 原始报错）；校验 frontmatter；脱敏 token/邮箱/绝对路径/内网 IP；每日默认最多 5 张；记录在 `~/.dsh/procedures/contribute-log.json`。
+- 策略文件：`~/.dsh/procedures/community.json`（插件配置里的 `communitySubmit` 只影响钩子文案）。
 - 社区仓库：https://github.com/fubai-fenzhi/dsh-procedures-community
 - token：`DSH_PROCEDURES_CONTRIBUTE_TOKEN`（或 `--token`），需要 issue 写权限；只读拉取不需要 token。
 - 关掉：在 profile 的 `cordis.patch.yml` 覆盖 `community: false`。

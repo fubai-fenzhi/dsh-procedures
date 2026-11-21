@@ -1,8 +1,16 @@
 # Changelog
 
+## 1.3.0
+
+- Community submission policy: `procedures community policy off|ask|auto`, persisted in `~/.dsh/procedures/community.json`.
+- `procedures contribute --auto`: validates cards, redacts tokens/emails/absolute paths/private IPs, enforces a daily cap (default 5), and logs submissions to `contribute-log.json`.
+- Hook text reflects the auto policy.
+- Tests for scrubbing, validation, caps and policy.
+
 ## 1.2.1
 
 - Metadata: author/copyright updated to `fubai-fenzhi` (`package.json`, market `index.json`, `LICENSE`).
+- Docs: refresh the README install/market notes and repository links; sync repository source with the published package.
 - No runtime changes.
 
 ## 1.2.0

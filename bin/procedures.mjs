@@ -13,10 +13,14 @@ import {
 import { synthesizeWithLlm } from '../lib/llm.mjs';
 import { hitsOf, outcomesOf, readStats } from '../lib/stats.mjs';
 import {
+  COMMUNITY_POLICY_VALUES,
   COMMUNITY_REPO,
+  communityPolicyPath,
   communityPull,
   communityStatus,
   contribute,
+  readCommunityPolicy,
+  writeCommunityPolicy,
 } from '../lib/community.mjs';
 import {
   collectLocal,
@@ -44,10 +48,12 @@ Usage:
   procedures sync   # pull then push
   procedures community pull [--global-dir DIR] [--repo OWNER/REPO] [--dry-run] [--json]
   procedures community status [--json]
-  procedures contribute [--dir procedures] [--global-dir DIR] [--repo OWNER/REPO] [--yes] [--json]
+  procedures community policy [off|ask|auto]
+  procedures contribute [--dir procedures] [--global-dir DIR] [--repo OWNER/REPO] [--yes | --auto] [--cap 5] [--json]
 
   community pulls curated cards from the public community repo into the global library.
-  contribute previews new local cards first; add --yes (and a GitHub token) to open issues.
+  contribute previews new local cards by default; --yes submits once, --auto submits with
+  validation/redaction and a daily cap. The persistent policy lives in community.json.
 
   --llm uses an OpenAI-compatible /chat/completions endpoint (DeepSeek by default).
   Key is read from DEEPSEEK_API_KEY or DSH_PROCEDURES_API_KEY; --dry-run needs no key.
@@ -395,6 +401,21 @@ async function commandCommunity(positional, flags) {
     ? flags.token
     : (process.env.DSH_PROCEDURES_CONTRIBUTE_TOKEN ?? sync.token);
 
+  if (sub === 'policy') {
+    const file = communityPolicyPath();
+    const value = positional[2];
+    if (!value) {
+      process.stdout.write(`community submission policy: ${readCommunityPolicy(file)}\n${file}\n`);
+      return undefined;
+    }
+    if (!COMMUNITY_POLICY_VALUES.includes(value)) {
+      return fail(`policy must be one of: ${COMMUNITY_POLICY_VALUES.join(' | ')}`);
+    }
+    writeCommunityPolicy(file, value);
+    process.stdout.write(`community submission policy: ${value}\n`);
+    return undefined;
+  }
+
   if (sub === 'status') {
     const result = await communityStatus({ globalDir: sync.globalDir, repo, token });
     if (json) {
@@ -435,7 +456,20 @@ async function commandContribute(flags) {
   const token = typeof flags.token === 'string'
     ? flags.token
     : (process.env.DSH_PROCEDURES_CONTRIBUTE_TOKEN ?? sync.token);
-  const dryRun = flags.yes !== true;
+  const policyFile = typeof flags.policy === 'string'
+    ? resolve(process.cwd(), flags.policy)
+    : communityPolicyPath();
+  const mode = flags.auto === true
+    ? 'auto'
+    : flags.yes === true
+      ? 'yes'
+      : readCommunityPolicy(policyFile);
+  if (mode === 'off' && flags.yes !== true) {
+    return fail('community submission is disabled (community.json submit=off); run: procedures community policy auto|ask');
+  }
+  const dryRun = !(mode === 'auto' || flags.yes === true);
+  const auto = mode === 'auto';
+  const cap = Number.parseInt(String(flags.cap ?? '5'), 10) || 5;
 
   try {
     const result = await contribute({
@@ -443,18 +477,24 @@ async function commandContribute(flags) {
       repo,
       token,
       dryRun,
+      auto,
+      cap,
       log: (line) => {
         if (!json) process.stdout.write(`${line}\n`);
       },
     });
     if (json) {
-      printJson({ action: 'contribute', repo, dryRun, ...result });
+      printJson({ action: 'contribute', repo, mode, dryRun, cap, ...result });
     } else if (result.candidates === 0) {
       process.stdout.write('no new card to contribute\n');
     } else if (dryRun) {
-      process.stdout.write(`would submit ${result.candidates} card(s) to ${repo}; re-run with --yes to open issues\n`);
+      process.stdout.write(
+        `would submit ${result.candidates} card(s) to ${repo} (mode=${mode}); re-run with --yes, or set: procedures community policy auto\n`,
+      );
     } else {
-      process.stdout.write(`submitted ${result.submitted} card(s) to ${repo}\n`);
+      process.stdout.write(
+        `submitted ${result.submitted} card(s) to ${repo} (blocked ${result.blocked}, redacted ${result.redacted}, capped ${result.capped})\n`,
+      );
     }
   } catch (error) {
     return fail(String(error));

@@ -65,7 +65,7 @@ node bin/procedures.mjs sync status
 
 The plugin enables community cards by default:
 
-- The hook mentions `community pull` (fill gaps) and `contribute` (preview first).
+- The hook mentions `community pull` (fill gaps) and `contribute`.
 - Pull curated cards into the global library (public repo, read-only, never overwrites existing cards):
 
 ```bash
@@ -73,14 +73,26 @@ node bin/procedures.mjs community pull
 node bin/procedures.mjs community status
 ```
 
-- Contribute local cards (preview by default; add `--yes` to open issues):
+- Submission policy (set once, then it can run automatically):
+
+```bash
+node bin/procedures.mjs community policy          # show (default: ask)
+node bin/procedures.mjs community policy ask      # preview, then confirm manually
+node bin/procedures.mjs community policy auto     # submit automatically (redaction + daily cap)
+node bin/procedures.mjs community policy off      # disable submission
+```
+
+- Manual contribution: `contribute` previews by default; `--yes` submits once; `--auto` validates/redacts and applies the cap:
 
 ```bash
 node bin/procedures.mjs contribute
 node bin/procedures.mjs contribute --yes
+node bin/procedures.mjs contribute --auto
+node bin/procedures.mjs contribute --auto --cap 10
 ```
 
-- Only cards you already have locally are sent — never raw `_inbox.md` errors. The maintainer reviews and merges into `cards/`; everyone pulls them with `community pull`.
+- `auto` guardrails: only cards you already have locally (never raw `_inbox.md` errors), frontmatter validation, redaction of tokens/emails/absolute paths/private IPs, a daily cap of 5 by default, and a log at `~/.dsh/procedures/contribute-log.json`.
+- Policy file: `~/.dsh/procedures/community.json` (the plugin's `communitySubmit` config only changes the hook wording).
 - Community repo: https://github.com/fubai-fenzhi/dsh-procedures-community
 - Token: `DSH_PROCEDURES_CONTRIBUTE_TOKEN` (or `--token`) with issue write access; read-only pulls need no token.
 - Disable: override `community: false` in the profile `cordis.patch.yml`.
