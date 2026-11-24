@@ -34,8 +34,8 @@
         "zh": "经验卡库"
       },
       "description": {
-        "en": "Turn repeated agent mistakes into small cards. A hit injects only a one-line pointer and is resolved locally — on a hit, roughly 83–90% fewer tokens.",
-        "zh": "把 agent 反复踩的坑变成小卡片；命中一张时只注入一行提示、由钩子本地解决，约省 83%~90% token。"
+        "en": "Turn repeated agent mistakes into small cards. A hit injects only a one-line pointer and is resolved locally — on a hit, roughly 83–90% fewer tokens — with a community card library you can pull from and contribute to.",
+        "zh": "把 agent 反复踩的坑变成小卡片；命中一张时只注入一行提示、由钩子本地解决，约省 83%~90% token；社区卡库可拉取、可贡献。"
       },
       "author": "fubai-fenzhi",
       "homepage": "https://github.com/fubai-fenzhi/dsh-procedures#readme",
@@ -58,6 +58,16 @@
         "sortKeys": {}
       },
       "versions": [
+        {
+          "version": "1.3.3",
+          "publishTimestamp": 1795484395,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.3"
+          }
+        },
         {
           "version": "1.3.2",
           "publishTimestamp": 1795481959,
