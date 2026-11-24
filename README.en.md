@@ -2,7 +2,7 @@
 
 File-based experience cards for DeepSeek Harness (DSH) and other agents.
 
-> Turn repeated agent mistakes into small per-workspace cards. When a matching tool error appears, inject only a one-line pointer — never the whole card. Resolved locally on a hit, with roughly 50–85% fewer tokens.
+> Turn repeated agent mistakes into small per-workspace cards. When a matching tool error appears, inject only a one-line pointer — never the whole card. Resolved locally on a hit, with roughly 83–90% fewer tokens per hit (measured; see `bench/tokens.mjs`).
 
 [中文 README](README.md) | [Portable kit](portable/README.md) | [Changelog](CHANGELOG.md) | [Pro (planned)](PRO.md)
 
@@ -22,6 +22,18 @@ File-based experience cards for DeepSeek Harness (DSH) and other agents.
 - **Portable kit**: `AGENTS.md` hook + CLI + `bin/hint.mjs` for non-DSH agents.
 
 Not included: tool registration, vector search, full-card injection, auto-promotion, auto-execution of spell code.
+
+## Benchmarks
+
+`node bench/tokens.mjs --dir procedures` on the current 9-card library (rough estimate: CJK ≈ 1 token/char, other ≈ 4 chars/token):
+
+| Scenario | Baseline | Plugin | Saved |
+|---|---|---|---|
+| per hit: one-line hint vs full card | 3841 tok | 470 tok | **87.8%** (per card 82.9%–89.8%) |
+| per session: all cards resident vs hook + 0 cards | 3841 tok | 367 tok | 90.4% |
+| per session: all cards resident vs hook + 2 cards | 3841 tok | 1221 tok | 68.2% |
+
+Per-hit savings land around **83%–90%**.
 
 ## Install from the market
 

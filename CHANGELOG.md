@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.2
+
+- Description: replace the conservative 50–85% token claim with the measured 83–90% per hit (`bench/tokens.mjs`).
+- README (both): update the claim and the benchmark conclusion; no runtime changes.
+
+## 1.3.1
+
+- Add `bench/tokens.mjs`: measures the one-line hint vs the whole card (per hit ~83–90% fewer tokens) and the resident whole-library baseline (68–90% depending on cards loaded).
+- README: add measured benchmark numbers and refresh the current version line.
+- Workspace card `tool-app-asar-files` promoted to `rarity: rare` after 4 hits.
+
 ## 1.3.0
 
 - Community submission policy: `procedures community policy off|ask|auto`, persisted in `~/.dsh/procedures/community.json`.

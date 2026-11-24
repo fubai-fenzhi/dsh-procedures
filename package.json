@@ -1,8 +1,8 @@
 {
   "name": "dsh-procedures",
-  "version": "1.3.0",
+  "version": "1.3.2",
   "type": "module",
-  "description": "File-based experience cards for DSH and other agents: hit-triggered local hints solve mistakes in place — roughly 50–85% fewer tokens — plus stats, rarity, and cross-machine sync.",
+  "description": "File-based experience cards for DSH and other agents: hit-triggered local hints solve mistakes in place — on a hit, roughly 83–90% fewer tokens — plus stats, rarity, and cross-machine sync.",
   "license": "MIT",
   "author": "fubai-fenzhi",
   "homepage": "https://github.com/fubai-fenzhi/dsh-procedures#readme",
@@ -15,6 +15,7 @@
   },
   "keywords": [
     "dsh",
+    "dsh-plugin",
     "deepseek-harness",
     "agents",
     "procedures",
