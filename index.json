@@ -59,6 +59,36 @@
       },
       "versions": [
         {
+          "version": "1.6.1",
+          "publishTimestamp": 1795492284,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.3"
+          }
+        },
+        {
+          "version": "1.6.0",
+          "publishTimestamp": 1795492055,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.3"
+          }
+        },
+        {
+          "version": "1.4.0",
+          "publishTimestamp": 1795485329,
+          "source": {
+            "type": "npm"
+          },
+          "engines": {
+            "dsh": ">=0.2.1-rc.3"
+          }
+        },
+        {
           "version": "1.3.3",
           "publishTimestamp": 1795484395,
           "source": {
