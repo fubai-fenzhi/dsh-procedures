@@ -4,3 +4,5 @@
       config:
         autoInbox: false
         hintOnError: true
+    - id: dsh-procedures-ui
+      name: dsh-procedures/ui-route

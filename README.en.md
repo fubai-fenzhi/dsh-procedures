@@ -91,6 +91,9 @@ node bin/procedures.mjs community status
 node bin/procedures.mjs contribute --open
 ```
 
+- Community feed: the hook rotates a real "community cards: N, latest …" line (hourly cache, falls back to cache offline); `community feed` prints it.
+- Visual panel: a **Procedures** settings tab and a sidebar **Procedures** button open a rolling feed (latest additions rotate every 3s; the browser reads GitHub directly with a 1-hour cache).
+
 - Submission policy (set once, then it can run automatically):
 
 ```bash
@@ -158,6 +161,8 @@ stdout is the one-line hint, or empty when nothing matches (exit code 0). Add `-
 | `globalPenalty` | `1` | Score penalty for global cards |
 | `stats` / `globalStats` | `true` | Hit counters |
 | `resolutionWindow` / `resolutionSeconds` | `5` / `120` | Post-hint repeat window |
+| `communitySubmit` | `ask` | `off` / `ask` / `auto` submission policy |
+| `communityFeed` | `true` | Rotating community line in the hook (real counts, hourly cache) |
 
 ## CLI
 

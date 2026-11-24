@@ -3,6 +3,7 @@ import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { isAbsolute, join, relative, resolve } from 'node:path';
 
+import { readFeedCache, refreshFeed, feedLine } from './lib/community-feed.mjs';
 import { appendInbox, searchCards } from './lib/cards.mjs';
 import { HOOK_TEXT, globalHookText } from './lib/hook-text.mjs';
 import { buildHint } from './lib/hint.mjs';
@@ -42,6 +43,7 @@ const DEFAULTS = {
   community: true,
   communityRepo: 'fubai-fenzhi/dsh-procedures-community',
   communitySubmit: 'ask',
+  communityFeed: true,
 };
 
 function positive(value, fallback) {
@@ -86,7 +88,21 @@ function normalizeConfig(raw) {
     communitySubmit: ['off', 'ask', 'auto'].includes(source.communitySubmit)
       ? source.communitySubmit
       : DEFAULTS.communitySubmit,
+    communityFeed: source.communityFeed !== false,
   };
+}
+
+function communityFeedText(cfg, agent) {
+  if (!cfg.community || !cfg.communityFeed) return '';
+  try {
+    const cached = readFeedCache();
+    refreshFeed({ repo: cfg.communityRepo }).catch(() => {});
+    if (!cached) return '';
+    const seed = `${agent?.id ?? ''}:${new Date().toISOString().slice(0, 10)}`;
+    return feedLine(cached, seed);
+  } catch {
+    return '';
+  }
 }
 
 function warn(ctx, message) {
@@ -337,7 +353,7 @@ export function apply(ctx, rawConfig) {
         : cfg.communitySubmit === 'auto'
           ? '\n- 社区卡库已启用（auto）：缺卡可 procedures community pull；收尾可 procedures contribute（自动脱敏、每日限额）。'
           : '\n- 社区卡库已启用：缺卡可 procedures community pull；收尾把值得分享的卡提给社区：procedures contribute --open（免 token，生成提交链接）。';
-      const hook = cfg.community ? `${base}${communityLine}` : base;
+      const hook = cfg.community ? `${base}${communityLine}${communityFeedText(cfg, agent)}` : base;
       state.registrations.push(agent.ctx.systemPrompt.section({
         name: 'procedures',
         order: cfg.sectionOrder,

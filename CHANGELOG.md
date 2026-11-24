@@ -1,5 +1,41 @@
 # Changelog
 
+## 1.6.1
+
+- One-click submission now skips cards that already have an open `[card]` issue and tells you how many are waiting for review — repeated clicks no longer create duplicate issues.
+
+## 1.6.0
+
+- One-click submission: the panel's **一键提交我的卡牌** button calls a host route (`/dsh-procedures/contribute/open`, separate `dsh-procedures-ui` row) that turns the current workspace's local cards into pre-filled GitHub issue links; no token needed.
+- The UI route requires `webServer`; the core hook row is independent, so Electron/file:// profiles keep working.
+- The panel also shows the plugin version and npm update check.
+
+## 1.5.3
+
+- Client: clicking **Procedures** (or **刷新**) also checks the npm registry for a newer `dsh-procedures` and shows "有新版 x.y.z → 去 设置 → 插件 → 插件市场 更新"; the check is cached for an hour.
+- Version shown in the panel; no host route or `webServer` dependency.
+
+## 1.5.2
+
+- Client: the panel auto-refreshes once per day (24h) instead of every 5 minutes; clicking **Procedures** or **刷新** still forces an immediate refresh.
+- Clarify: clicking Procedures refreshes community data only; plugin upgrades stay in Plugin Manager.
+
+## 1.5.1
+
+- Client: clicking the sidebar **Procedures** button (or the panel's 刷新 button) forces a fresh feed fetch, bypassing the hourly cache; the panel also auto-refreshes every 5 minutes.
+
+## 1.5.0
+
+- Client UI: a "Procedures" settings tab and a sidebar button that open a rolling community ticker (latest additions rotate every 3s, hourly cache in localStorage).
+- The client reads the public community repo directly (no token, no host route); disabled gracefully when the browser has no network.
+- Tests: unchanged host suite still passes.
+
+## 1.4.0
+
+- Community feed: the hook shows a rotating, real "community cards: N, latest …" line (hourly cache); add `procedures community feed` CLI and the `communityFeed` config (default true).
+- Community library seeded 9 → 16 cards; three demo submissions were merged through the issue flow and closed.
+- Tests for the feed cache and rotation.
+
 ## 1.3.3
 
 - `contribute --open`: prints pre-filled GitHub issue links, so contributing no longer needs a token (submit in the browser).

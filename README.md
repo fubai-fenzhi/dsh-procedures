@@ -6,7 +6,7 @@
 
 [English](README.en.md) | [Changelog](CHANGELOG.md)
 
-当前版本：**1.3.3**（DSH 插件 + 通用本地版；市场候选版）。
+当前版本：**1.6.1**（DSH 插件 + 通用本地版；市场候选版）。
 
 ## 30 秒上手
 
@@ -126,6 +126,14 @@ node bin/procedures.mjs community status
 ```bash
 node bin/procedures.mjs contribute --open
 ```
+
+- **社区动态**：hook 每次会话轮换显示社区卡数与最近新增（缓存 1 小时，离线用缓存）；CLI 查看：
+
+```bash
+node bin/procedures.mjs community feed
+```
+
+- **可视面板**：设置页有 **Procedures** 页签、侧边栏有 **Procedures** 按钮，打开后是滚动社区动态（每 3 秒轮换最近新增；点击按钮/刷新立即拉取，每天自动刷新一次；浏览器端直连 GitHub，1 小时缓存）。面板还会顺带查 npm 最新版本，有新版时提示去插件市场更新；**一键提交我的卡牌**按钮会生成预填提交链接（免 token）。
 
 - 贡献策略（一次设置，之后可自动跑）：
 
@@ -344,6 +352,7 @@ $env:DEEPSEEK_API_KEY = "sk-..."
 | `community` | `true` | 启用社区卡库支持（钩子提示 + `community pull`） |
 | `communityRepo` | `fubai-fenzhi/dsh-procedures-community` | 社区卡库仓库 |
 | `communitySubmit` | `ask` | 贡献方式：`off` 不提示 / `ask` 手动确认（默认）/ `auto` 预留 |
+| `communityFeed` | `true` | 钩子里的社区动态行（真实卡数 + 最近新增；缓存 1 小时） |
 
 要覆盖配置，在 profile 的 `cordis.patch.yml` 里加一条同 id 行（注意：匹配的 override 会替换**整个** config，没写的键会回落到默认值，不会继承 bundle 里的值）：
 

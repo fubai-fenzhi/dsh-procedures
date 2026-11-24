@@ -1,6 +1,6 @@
 {
   "name": "dsh-procedures",
-  "version": "1.3.3",
+  "version": "1.6.1",
   "type": "module",
   "description": "File-based experience cards for DSH and other agents: hit-triggered local hints solve mistakes in place — on a hit, roughly 83–90% fewer tokens — plus stats, rarity, cross-machine sync, and a community card library you can pull from and contribute to.",
   "license": "MIT",
@@ -32,11 +32,15 @@
   },
   "exports": {
     ".": "./index.js",
+    "./client": "./client.js",
+    "./ui-route": "./ui-route.js",
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg"
   },
   "files": [
     "index.js",
+    "client.js",
+    "ui-route.js",
     "lib/*.mjs",
     "bin/*.mjs",
     "bench/*.mjs",
@@ -53,6 +57,13 @@
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings"
+      ]
     }
   }
 }

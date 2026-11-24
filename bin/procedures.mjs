@@ -10,6 +10,7 @@ import {
   searchCards,
   synthesizeDrafts,
 } from '../lib/cards.mjs';
+import { refreshFeed } from '../lib/community-feed.mjs';
 import { synthesizeWithLlm } from '../lib/llm.mjs';
 import { hitsOf, outcomesOf, readStats } from '../lib/stats.mjs';
 import {
@@ -48,6 +49,7 @@ Usage:
   procedures sync   # pull then push
   procedures community pull [--global-dir DIR] [--repo OWNER/REPO] [--dry-run] [--json]
   procedures community status [--json]
+  procedures community feed [--json]
   procedures community policy [off|ask|auto]
   procedures contribute [--dir procedures] [--global-dir DIR] [--repo OWNER/REPO] [--yes | --auto | --open] [--cap 5] [--json]
 
@@ -417,6 +419,22 @@ async function commandCommunity(positional, flags) {
     return undefined;
   }
 
+  if (sub === 'feed') {
+    const feed = await refreshFeed({ repo, token, ttlMs: 0 });
+    if (json) {
+      printJson(feed);
+    } else if (!feed) {
+      process.stdout.write('community feed unavailable\n');
+    } else {
+      process.stdout.write(`community cards: ${feed.cards}${feed.fetchedAt ? ` (updated ${feed.fetchedAt.slice(0, 10)})` : ''}\n`);
+      for (const item of feed.latest ?? []) {
+        const name = String(item.name ?? '').replace(/\.md$/, '');
+        process.stdout.write(`- ${name}${item.at ? ` (${String(item.at).slice(0, 10)})` : ''}\n`);
+      }
+    }
+    return undefined;
+  }
+
   if (sub === 'status') {
     const result = await communityStatus({ globalDir: sync.globalDir, repo, token });
     if (json) {
@@ -429,7 +447,7 @@ async function commandCommunity(positional, flags) {
     return undefined;
   }
 
-  if (sub !== 'pull') return fail(`unknown community subcommand: ${sub} (pull|status)`);
+  if (sub !== 'pull') return fail(`unknown community subcommand: ${sub} (pull|status|feed|policy)`);
 
   const dryRun = flags['dry-run'] === true;
   try {
