@@ -6,6 +6,16 @@ File-based experience cards for DeepSeek Harness (DSH) and other agents.
 
 [中文 README](README.md) | [Portable kit](portable/README.md) | [Changelog](CHANGELOG.md) | [Pro (planned)](PRO.md)
 
+## Cost (tokens)
+
+The hook is injected only when the workspace has a `procedures/` directory (or a configured `globalDir`); otherwise it costs nothing.
+
+- **Resident hook**: about **440 tokens per turn** (~367 body + ~74 community lines)
+- **Cards are not resident**: a hit injects a one-line pointer (~50 tokens) and the card is read on demand (about 450 tokens each)
+- For comparison, keeping all 16 cards resident would cost about **3800 tokens per turn**
+
+At DeepSeek's official pricing (2026-11, off-peak, deepseek-flash): about **¥0.000009/turn** with a cache hit and **¥0.00044/turn** on a cache miss; peak hours are ×2; deepseek-v4-pro is roughly 7–8× flash. These are estimates that move with the model, pricing and cache hit rate.
+
 ## Positioning & Pro
 
 - **Free core**: single-machine experience cards (hook, failure hints, CLI, skills) — MIT, free forever.
