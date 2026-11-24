@@ -14,7 +14,9 @@ The hook is injected only when the workspace has a `procedures/` directory (or a
 - **Cards are not resident**: a hit injects a one-line pointer (~50 tokens) and the card is read on demand (about 450 tokens each)
 - For comparison, keeping all 16 cards resident would cost about **3800 tokens per turn**
 
-At DeepSeek's official pricing (2026-11, off-peak, deepseek-flash): about **¥0.000009/turn** with a cache hit and **¥0.00044/turn** on a cache miss; peak hours are ×2; deepseek-v4-pro is roughly 7–8× flash. These are estimates that move with the model, pricing and cache hit rate.
+Pricing follows DeepSeek's official page: https://api-docs.deepseek.com/quick_start/pricing
+
+The numbers below are **example estimates** (official 2026-11 off-peak pricing, deepseek-flash: about **¥0.000009/turn** with a cache hit and **¥0.00044/turn** on a cache miss; peak hours are ×2; deepseek-v4-pro is roughly 7–8× flash). Actual cost varies with the model, pricing and cache hit rate; use official billing as the source of truth.
 
 ## Positioning & Pro
 
