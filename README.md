@@ -1,12 +1,12 @@
 # dsh-procedures
 
-> 给 agent 开一个“抽卡”外挂：踩过的坑变成卡，失败时自动抽一张，卡库按需读；命中即由钩子本地提示，命中一张卡约省 83%~90% token（实测，见 `bench/tokens.mjs`）。
+> 给 agent 开一个“抽卡”外挂：踩过的坑变成卡，失败时自动抽一张，卡库按需读；命中一张卡约省 83%~90% token（实测，见 `bench/tokens.mjs`）；社区卡库可拉取、可贡献。
 
 文件化经验卡 + DSH 条件钩子。目标只有一个：让 agent 不再重复踩同一个坑，同时不把卡片常驻进上下文。
 
 [English](README.en.md) | [Changelog](CHANGELOG.md)
 
-当前版本：**1.3.2**（DSH 插件 + 通用本地版；市场候选版）。
+当前版本：**1.3.3**（DSH 插件 + 通用本地版；市场候选版）。
 
 ## 30 秒上手
 
@@ -113,12 +113,18 @@ node bin/procedures.mjs sync status
 
 插件默认启用社区卡库支持：
 
-- 钩子提示：缺卡可 `community pull`，有值得分享的卡可 `contribute`。
+- 钩子提示：缺卡可 `community pull`；收尾把值得分享的卡提给社区：`contribute --open`（免 token）。
 - 拉取精选卡到全局库（公开仓库、只读，不覆盖你已有的卡）：
 
 ```bash
 node bin/procedures.mjs community pull
 node bin/procedures.mjs community status
+```
+
+- **零 token 提交**（第一次用推荐）：生成预填好的 GitHub issue 链接，浏览器里点「Create」即可：
+
+```bash
+node bin/procedures.mjs contribute --open
 ```
 
 - 贡献策略（一次设置，之后可自动跑）：
@@ -130,11 +136,12 @@ node bin/procedures.mjs community policy auto     # 自动提交（脱敏 + 每�
 node bin/procedures.mjs community policy off      # 关闭提交
 ```
 
-- 手动贡献：`contribute` 默认只预览；`--yes` 提交一次；`--auto` 按校验/脱敏/限额提交：
+- 手动贡献：`contribute` 默认只预览；`--open` 出提交链接（免 token）；`--yes` 提交一次；`--auto` 按校验/脱敏/限额提交：
 
 ```bash
 node bin/procedures.mjs contribute          # 预览
-node bin/procedures.mjs contribute --yes    # 提交一次
+node bin/procedures.mjs contribute --open   # 生成提交链接（不需要 token）
+node bin/procedures.mjs contribute --yes    # 提交一次（需要 token）
 node bin/procedures.mjs contribute --auto   # 自动模式（需要 token）
 node bin/procedures.mjs contribute --auto --cap 10
 ```

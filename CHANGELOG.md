@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.3
+
+- `contribute --open`: prints pre-filled GitHub issue links, so contributing no longer needs a token (submit in the browser).
+- Hook text points at `contribute --open`; npm and market descriptions mention the community library.
+- Docs (both READMEs): tokenless submission path and community entry points.
+
 ## 1.3.2
 
 - Description: replace the conservative 50–85% token claim with the measured 83–90% per hit (`bench/tokens.mjs`).

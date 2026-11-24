@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
 
-import { collectCardFiles, communityPull, contribute, readCommunityPolicy, scrubCard, validateCard, writeCommunityPolicy } from '../lib/community.mjs';
+import { collectCardFiles, communityPull, contribute, issueUrl, readCommunityPolicy, scrubCard, validateCard, writeCommunityPolicy } from '../lib/community.mjs';
 
 function dir(prefix) {
   return mkdtempSync(join(tmpdir(), `dsh-community-${prefix}-`));
@@ -116,6 +116,34 @@ test('contribute previews new cards without creating issues', async () => {
   assert.equal(result.candidates, 1);
   assert.equal(result.submitted, 0);
   assert.equal(remote.issues.length, 0);
+  rmSync(root, { recursive: true, force: true });
+});
+
+test('issueUrl builds a pre-filled GitHub issue link', () => {
+  const url = issueUrl({ repo: 'o/r', title: '[card] x.md', body: '---\nid: x\n---', labels: ['card-submission'] });
+  assert.match(url, /^https:\/\/github\.com\/o\/r\/issues\/new\?/);
+  assert.match(url, /title=%5Bcard%5D%20x\.md/);
+  assert.match(url, /body=---%0Aid%3A%20x%0A---/);
+  assert.match(url, /labels=card-submission/);
+});
+
+test('contribute --open returns links without a token', async () => {
+  const root = dir('open');
+  mkdirSync(join(root, 'cards'), { recursive: true });
+  writeFileSync(join(root, 'cards', 'a.md'), cardText('a'));
+  const fake = async () => ({ ok: false, status: 404, async json() { return {}; }, async text() { return ''; } });
+  const result = await contribute({
+    dirs: [root],
+    repo: 'o/r',
+    fetchImpl: fake,
+    open: true,
+    dryRun: true,
+    home: root,
+  });
+  assert.equal(result.opened, 1);
+  assert.equal(result.urls.length, 1);
+  assert.match(result.urls[0], /github\.com\/o\/r\/issues\/new/);
+  assert.equal(result.submitted, 0);
   rmSync(root, { recursive: true, force: true });
 });
 

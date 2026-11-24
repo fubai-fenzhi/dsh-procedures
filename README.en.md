@@ -2,7 +2,7 @@
 
 File-based experience cards for DeepSeek Harness (DSH) and other agents.
 
-> Turn repeated agent mistakes into small per-workspace cards. When a matching tool error appears, inject only a one-line pointer — never the whole card. Resolved locally on a hit, with roughly 83–90% fewer tokens per hit (measured; see `bench/tokens.mjs`).
+> Turn repeated agent mistakes into small per-workspace cards. When a matching tool error appears, inject only a one-line pointer — never the whole card. Resolved locally on a hit, with roughly 83–90% fewer tokens per hit (measured; see `bench/tokens.mjs`). A community card library is included: pull curated cards, contribute your own.
 
 [中文 README](README.md) | [Portable kit](portable/README.md) | [Changelog](CHANGELOG.md) | [Pro (planned)](PRO.md)
 
@@ -77,12 +77,18 @@ node bin/procedures.mjs sync status
 
 The plugin enables community cards by default:
 
-- The hook mentions `community pull` (fill gaps) and `contribute`.
+- The hook mentions `community pull` (fill gaps) and `contribute --open` (tokenless).
 - Pull curated cards into the global library (public repo, read-only, never overwrites existing cards):
 
 ```bash
 node bin/procedures.mjs community pull
 node bin/procedures.mjs community status
+```
+
+- Tokenless submission (easiest first step): prints pre-filled GitHub issue links; click **Create** in the browser:
+
+```bash
+node bin/procedures.mjs contribute --open
 ```
 
 - Submission policy (set once, then it can run automatically):
@@ -94,10 +100,11 @@ node bin/procedures.mjs community policy auto     # submit automatically (redact
 node bin/procedures.mjs community policy off      # disable submission
 ```
 
-- Manual contribution: `contribute` previews by default; `--yes` submits once; `--auto` validates/redacts and applies the cap:
+- Manual contribution: `contribute` previews by default; `--open` prints submission links (no token); `--yes` submits once; `--auto` validates/redacts and applies the cap:
 
 ```bash
 node bin/procedures.mjs contribute
+node bin/procedures.mjs contribute --open
 node bin/procedures.mjs contribute --yes
 node bin/procedures.mjs contribute --auto
 node bin/procedures.mjs contribute --auto --cap 10
@@ -106,7 +113,7 @@ node bin/procedures.mjs contribute --auto --cap 10
 - `auto` guardrails: only cards you already have locally (never raw `_inbox.md` errors), frontmatter validation, redaction of tokens/emails/absolute paths/private IPs, a daily cap of 5 by default, and a log at `~/.dsh/procedures/contribute-log.json`.
 - Policy file: `~/.dsh/procedures/community.json` (the plugin's `communitySubmit` config only changes the hook wording).
 - Community repo: https://github.com/fubai-fenzhi/dsh-procedures-community
-- Token: `DSH_PROCEDURES_CONTRIBUTE_TOKEN` (or `--token`) with issue write access; read-only pulls need no token.
+- Token: `DSH_PROCEDURES_CONTRIBUTE_TOKEN` (or `--token`) with issue write access; `--open` and read-only pulls need no token.
 - Disable: override `community: false` in the profile `cordis.patch.yml`.
 
 ## Install (DSH)

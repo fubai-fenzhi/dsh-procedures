@@ -336,7 +336,7 @@ export function apply(ctx, rawConfig) {
         ? '\n- 社区卡库已启用：缺卡可 procedures community pull。'
         : cfg.communitySubmit === 'auto'
           ? '\n- 社区卡库已启用（auto）：缺卡可 procedures community pull；收尾可 procedures contribute（自动脱敏、每日限额）。'
-          : '\n- 社区卡库已启用：缺卡可 procedures community pull；有值得分享的卡可 procedures contribute（先预览、确认后发）。';
+          : '\n- 社区卡库已启用：缺卡可 procedures community pull；收尾把值得分享的卡提给社区：procedures contribute --open（免 token，生成提交链接）。';
       const hook = cfg.community ? `${base}${communityLine}` : base;
       state.registrations.push(agent.ctx.systemPrompt.section({
         name: 'procedures',

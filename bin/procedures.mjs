@@ -49,11 +49,12 @@ Usage:
   procedures community pull [--global-dir DIR] [--repo OWNER/REPO] [--dry-run] [--json]
   procedures community status [--json]
   procedures community policy [off|ask|auto]
-  procedures contribute [--dir procedures] [--global-dir DIR] [--repo OWNER/REPO] [--yes | --auto] [--cap 5] [--json]
+  procedures contribute [--dir procedures] [--global-dir DIR] [--repo OWNER/REPO] [--yes | --auto | --open] [--cap 5] [--json]
 
   community pulls curated cards from the public community repo into the global library.
   contribute previews new local cards by default; --yes submits once, --auto submits with
-  validation/redaction and a daily cap. The persistent policy lives in community.json.
+  validation/redaction and a daily cap; --open prints pre-filled issue links and needs no token.
+  The persistent policy lives in community.json.
 
   --llm uses an OpenAI-compatible /chat/completions endpoint (DeepSeek by default).
   Key is read from DEEPSEEK_API_KEY or DSH_PROCEDURES_API_KEY; --dry-run needs no key.
@@ -459,16 +460,19 @@ async function commandContribute(flags) {
   const policyFile = typeof flags.policy === 'string'
     ? resolve(process.cwd(), flags.policy)
     : communityPolicyPath();
-  const mode = flags.auto === true
-    ? 'auto'
-    : flags.yes === true
-      ? 'yes'
-      : readCommunityPolicy(policyFile);
-  if (mode === 'off' && flags.yes !== true) {
+  const open = flags.open === true;
+  const mode = open
+    ? 'open'
+    : flags.auto === true
+      ? 'auto'
+      : flags.yes === true
+        ? 'yes'
+        : readCommunityPolicy(policyFile);
+  if (!open && mode === 'off' && flags.yes !== true) {
     return fail('community submission is disabled (community.json submit=off); run: procedures community policy auto|ask');
   }
-  const dryRun = !(mode === 'auto' || flags.yes === true);
-  const auto = mode === 'auto';
+  const dryRun = open ? true : !(mode === 'auto' || flags.yes === true);
+  const auto = !open && mode === 'auto';
   const cap = Number.parseInt(String(flags.cap ?? '5'), 10) || 5;
 
   try {
@@ -478,15 +482,19 @@ async function commandContribute(flags) {
       token,
       dryRun,
       auto,
+      open,
       cap,
       log: (line) => {
-        if (!json) process.stdout.write(`${line}\n`);
+        if (!json && !(open && line.startsWith('open '))) process.stdout.write(`${line}\n`);
       },
     });
     if (json) {
       printJson({ action: 'contribute', repo, mode, dryRun, cap, ...result });
     } else if (result.candidates === 0) {
       process.stdout.write('no new card to contribute\n');
+    } else if (result.opened > 0) {
+      process.stdout.write(`open ${result.opened} submission link(s) in your browser (no token needed):\n`);
+      for (const url of result.urls) process.stdout.write(`${url}\n`);
     } else if (dryRun) {
       process.stdout.write(
         `would submit ${result.candidates} card(s) to ${repo} (mode=${mode}); re-run with --yes, or set: procedures community policy auto\n`,

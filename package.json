@@ -1,8 +1,8 @@
 {
   "name": "dsh-procedures",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "type": "module",
-  "description": "File-based experience cards for DSH and other agents: hit-triggered local hints solve mistakes in place — on a hit, roughly 83–90% fewer tokens — plus stats, rarity, and cross-machine sync.",
+  "description": "File-based experience cards for DSH and other agents: hit-triggered local hints solve mistakes in place — on a hit, roughly 83–90% fewer tokens — plus stats, rarity, cross-machine sync, and a community card library you can pull from and contribute to.",
   "license": "MIT",
   "author": "fubai-fenzhi",
   "homepage": "https://github.com/fubai-fenzhi/dsh-procedures#readme",
