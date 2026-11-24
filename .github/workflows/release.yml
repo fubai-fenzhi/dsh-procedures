@@ -1,24 +1,63 @@
-name: Release
+# Copy to .github/workflows/release.yml in the package repository.
+#
+# Token publishing (default here):
+#   add a repository secret NPM_TOKEN = granular npm token
+#   (Read and write, Bypass 2FA; never commit it) and push a tag.
+#
+# Trusted publishing alternative (no token, needs account 2FA on npm):
+#   package page -> Settings -> Trusted publishing -> GitHub Actions
+#   then remove the NODE_AUTH_TOKEN env from the publish step.
+name: release
 
 on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: read
-  id-token: write
+  id-token: write # provenance attestation
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
-      - name: Use latest npm (trusted publishing)
+
+      - name: Use the npm CLI that supports provenance
         run: npm install -g npm@latest
-      - name: Publish to npm
+
+      - name: Verify the tag matches package.json
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version=$(node -p "require('./package.json').version")
+          if [ "$tag" != "$version" ]; then
+            echo "tag $tag does not match package.json version $version"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Test
+        run: |
+          if [ -d test ]; then
+            for file in test/*.test.mjs; do
+              [ -e "$file" ] || continue
+              node "$file"
+            done
+          fi
+
+      - name: Publish with provenance
         run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
