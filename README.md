@@ -60,7 +60,7 @@
 
 ## 给 AI / Agent
 
-如果你是一个 AI 助手，正在帮主 Agent 省 token：
+如果你是一个 AI 助手，正在帮主 Agent 省 token：**先看一页速查 [AI-GUIDE.md](AI-GUIDE.md)**。
 
 - 本插件把“踩过的坑”变成可按锚点检索的 Markdown 卡；命中时只注入一行指针，卡按需读取（一张约 450 token）
 - **不要读整库**：整库常驻约 6500 token/轮，单次命中不到 900 token（bench 实测省 86.5%）
