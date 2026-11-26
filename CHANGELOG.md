@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.3
+
+- One-click submit now opens the first card's GitHub issue page automatically (log in, click Create); remaining cards stay as links below, so the flow is a single click.
+
+## 1.6.2
+
+- Docs: add a token-cost section (resident hook ~440 tokens/turn, card bodies load on demand) and link the official DeepSeek pricing page; the npm description now mentions the resident cost. No runtime changes.
+
 ## 1.6.1
 
 - One-click submission now skips cards that already have an open `[card]` issue and tells you how many are waiting for review — repeated clicks no longer create duplicate issues.

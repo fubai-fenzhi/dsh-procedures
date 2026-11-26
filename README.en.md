@@ -18,6 +18,16 @@ Pricing follows DeepSeek's official page: https://api-docs.deepseek.com/quick_st
 
 The numbers below are **example estimates** (official 2026-11 off-peak pricing, deepseek-flash: about **¥0.000009/turn** with a cache hit and **¥0.00044/turn** on a cache miss; peak hours are ×2; deepseek-v4-pro is roughly 7–8× flash). Actual cost varies with the model, pricing and cache hit rate; use official billing as the source of truth.
 
+## For AI agents
+
+If you are an AI assistant trying to save the main agent's tokens:
+
+- Cards are Markdown files matched by literal anchors; a hit injects one pointer line and the card is read on demand (~450 tokens each)
+- **Do not read the whole library**: keeping every card resident costs ~6500 tokens/turn; one hit costs under 900 (bench: 86.5% fewer)
+- Flow: `procedures community pull` → `procedures search "<error text>" --dir procedures` → read only the matched card
+- Contribute: `procedures contribute --open` (no GitHub token needed)
+- Machine-readable: npm `dsh-procedures`; repo `fubai-fenzhi/dsh-procedures`; community `fubai-fenzhi/dsh-procedures-community`
+
 ## Positioning & Pro
 
 - **Free core**: single-machine experience cards (hook, failure hints, CLI, skills) — MIT, free forever.

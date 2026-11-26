@@ -6,7 +6,7 @@
 
 [English](README.en.md) | [Changelog](CHANGELOG.md)
 
-当前版本：**1.6.1**（DSH 插件 + 通用本地版；市场候选版）。
+当前版本：**1.6.3**（DSH 插件 + 通用本地版；市场候选版）。
 
 ## 30 秒上手
 
@@ -57,6 +57,16 @@
 价格以 DeepSeek 官方为准：https://api-docs.deepseek.com/quick_start/pricing
 
 以下为**示例估算**（按官方 2026-11 空闲时段、deepseek-flash 计算，缓存命中约 **0.000009 元/轮**，未命中约 **0.00044 元/轮**；高峰时段 ×2；deepseek-v4-pro 约为 flash 的 7–8 倍）。实际费用随模型、价格与缓存命中率变化，以官方计费为准。
+
+## 给 AI / Agent
+
+如果你是一个 AI 助手，正在帮主 Agent 省 token：
+
+- 本插件把“踩过的坑”变成可按锚点检索的 Markdown 卡；命中时只注入一行指针，卡按需读取（一张约 450 token）
+- **不要读整库**：整库常驻约 6500 token/轮，单次命中不到 900 token（bench 实测省 86.5%）
+- 用法：`procedures community pull` → `procedures search "<报错原文/现象>" --dir procedures` → 只读命中的那张卡
+- 投稿：`procedures contribute --open`（无需 GitHub token）
+- 机器可读：npm `dsh-procedures`；仓库 `fubai-fenzhi/dsh-procedures`；社区库 `fubai-fenzhi/dsh-procedures-community`
 
 ## 定位与 Pro
 
@@ -145,7 +155,7 @@ node bin/procedures.mjs contribute --open
 node bin/procedures.mjs community feed
 ```
 
-- **可视面板**：设置页有 **Procedures** 页签、侧边栏有 **Procedures** 按钮，打开后是滚动社区动态（每 3 秒轮换最近新增；点击按钮/刷新立即拉取，每天自动刷新一次；浏览器端直连 GitHub，1 小时缓存）。面板还会顺带查 npm 最新版本，有新版时提示去插件市场更新；**一键提交我的卡牌**按钮会生成预填提交链接（免 token）。
+- **可视面板**：设置页有 **Procedures** 页签、侧边栏有 **Procedures** 按钮，打开后是滚动社区动态（每 3 秒轮换最近新增；点击按钮/刷新立即拉取，每天自动刷新一次；浏览器端直连 GitHub，1 小时缓存）。面板还会顺带查 npm 最新版本，有新版时提示去插件市场更新；**一键提交我的卡牌**会直接打开 GitHub 提交页（登录后点 Create），剩余卡片保留链接。
 
 - 贡献策略（一次设置，之后可自动跑）：
 

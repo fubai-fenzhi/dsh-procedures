@@ -8,7 +8,7 @@ window.__ModuleLoader__.load({
     const FEED_TTL = 60 * 60 * 1000;
     const FEED_KEY = 'dsh-procedures-community-feed';
     const PLUGIN_NAME = 'dsh-procedures';
-    const PLUGIN_VERSION = '1.6.1';
+    const PLUGIN_VERSION = '1.6.3';
     const UPDATE_KEY = 'dsh-procedures-update-check';
 
     function compareVersions(left, right) {
@@ -159,6 +159,7 @@ window.__ModuleLoader__.load({
       const [submitError, setSubmitError] = React.useState('');
 
       const submitCards = async () => {
+        const popup = window.open('', '_blank');
         setSubmitBusy(true);
         setSubmitError('');
         setSubmitNote('');
@@ -169,14 +170,22 @@ window.__ModuleLoader__.load({
           if (!response.ok) throw new Error(String(data.error ?? `HTTP ${response.status}`));
           const urls = Array.isArray(data.urls) ? data.urls : [];
           const duplicates = Array.isArray(data.duplicates) ? data.duplicates : [];
-          setSubmitUrls(urls);
           const notes = [];
+          if (urls.length > 0) {
+            if (popup && !popup.closed) popup.location.href = urls[0];
+            else window.open(urls[0], '_blank');
+            setSubmitUrls(urls.slice(1));
+            notes.push(`已打开第 1 张卡的 GitHub 提交页；登录后点 Create 即完成。${urls.length > 1 ? `剩余 ${urls.length - 1} 个链接在下方。` : ''}`);
+          } else if (popup && !popup.closed) {
+            popup.close();
+          }
           if (duplicates.length > 0) {
             notes.push(`已提交过 ${duplicates.length} 张（等审核）：${duplicates.map((item) => `#${item.number}`).join(', ')}`);
           }
           if (urls.length === 0 && duplicates.length === 0) notes.push('没有可提交的新卡（可能都已在社区库）');
           setSubmitNote(notes.join('；'));
         } catch (cause) {
+          if (popup && !popup.closed) popup.close();
           setSubmitError(String(cause));
         } finally {
           setSubmitBusy(false);
@@ -215,7 +224,7 @@ window.__ModuleLoader__.load({
             target: '_blank',
             rel: 'noreferrer',
             style: { fontSize: '12px' },
-          }, `提交 #${index + 1}`))),
+          }, `提交 #${index + 2}`))),
         h('div', {
           style: {
             minHeight: '26px',
