@@ -8,7 +8,7 @@ window.__ModuleLoader__.load({
     const FEED_TTL = 60 * 60 * 1000;
     const FEED_KEY = 'dsh-procedures-community-feed';
     const PLUGIN_NAME = 'dsh-procedures';
-    const PLUGIN_VERSION = '1.6.3';
+    const PLUGIN_VERSION = '1.6.4';
     const UPDATE_KEY = 'dsh-procedures-update-check';
 
     function compareVersions(left, right) {
