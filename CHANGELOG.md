@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.4
+
+- Security: the `/dsh-procedures/contribute/open` route now enforces the Connection Host/Origin and browser-authentication checks (`ctx.connection.requestRejection`) and fails closed with 401/403, so local card content is not served to unauthenticated requests.
+
 ## 1.6.3
 
 - One-click submit now opens the first card's GitHub issue page automatically (log in, click Create); remaining cards stay as links below, so the flow is a single click.
