@@ -6,7 +6,7 @@
 
 [English](README.en.md) | [Changelog](CHANGELOG.md)
 
-当前版本：**1.6.3**（DSH 插件 + 通用本地版；市场候选版）。
+当前版本：**1.6.4**（DSH 插件 + 通用本地版；市场候选版）。
 
 ## 30 秒上手
 
