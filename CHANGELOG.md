@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.5
+
+- Panel: the community ticker no longer appends the card date after the title.
+
 ## 1.6.4
 
 - Security: the `/dsh-procedures/contribute/open` route now enforces the Connection Host/Origin and browser-authentication checks (`ctx.connection.requestRejection`) and fails closed with 401/403, so local card content is not served to unauthenticated requests.
