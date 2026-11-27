@@ -21,6 +21,12 @@
           "en": "Tooling",
           "zh": "工具"
         }
+      },
+      "communication": {
+        "title": {
+          "en": "Communication",
+          "zh": "通讯"
+        }
       }
     },
     "labels": {},
@@ -186,6 +192,46 @@
           },
           "engines": {
             "dsh": ">=0.2.1-rc.3"
+          }
+        }
+      ]
+    },
+    {
+      "name": "@fubai-fenzhi/dsh-qqmail",
+      "title": {
+        "en": "QQ Mail",
+        "zh": "QQ 邮箱"
+      },
+      "description": {
+        "en": "Read, search, file, mark read, deduplicate, and send a QQ mailbox over IMAP/SMTP. Rule-based archiving previews every move first, and the send tool previews the rendered mail before it transmits.",
+        "zh": "通过 IMAP/SMTP 管理 QQ 邮箱：查看、搜索、按规则归档、标记已读、去重和发信。归档与发信默认只做预览，确认后才真正执行。"
+      },
+      "author": "fubai-fenzhi",
+      "homepage": "https://github.com/fubai-fenzhi/dsh-qqmail#readme",
+      "repository": {
+        "url": "https://github.com/fubai-fenzhi/dsh-qqmail"
+      },
+      "icon": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjggMTI4IiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IlFRIE1haWwiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJxYmciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMmY3Y2Y2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzE1NTJjNCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3Qgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiIHJ4PSIyOCIgZmlsbD0idXJsKCNxYmcpIi8+CiAgPHJlY3QgeD0iMjQiIHk9IjM4IiB3aWR0aD0iODAiIGhlaWdodD0iNTIiIHJ4PSI4IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxwYXRoIGQ9Ik0yNyA0MyBMNjQgNzAgTDEwMSA0MyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPgogIDxjaXJjbGUgY3g9IjEwMCIgY3k9IjM0IiByPSI5IiBmaWxsPSIjNjNlNmE4Ii8+Cjwvc3ZnPgo=",
+      "metadata": {
+        "category": "communication",
+        "keywords": [
+          "qqmail",
+          "email",
+          "imap",
+          "smtp",
+          "mailbox",
+          "archive",
+          "dsh"
+        ],
+        "labels": [],
+        "sortKeys": {}
+      },
+      "versions": [
+        {
+          "version": "0.1.1",
+          "publishTimestamp": 1795803313,
+          "source": {
+            "type": "npm"
           }
         }
       ]
