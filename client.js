@@ -8,7 +8,7 @@ window.__ModuleLoader__.load({
     const FEED_TTL = 60 * 60 * 1000;
     const FEED_KEY = 'dsh-procedures-community-feed';
     const PLUGIN_NAME = 'dsh-procedures';
-    const PLUGIN_VERSION = '1.6.4';
+    const PLUGIN_VERSION = '1.6.5';
     const UPDATE_KEY = 'dsh-procedures-update-check';
 
     function compareVersions(left, right) {
@@ -237,7 +237,7 @@ window.__ModuleLoader__.load({
         },
         current
           ? h('div', { key: `${current.name}-${index}` },
-            `● 最近新增：${String(current.name).replace(/\.md$/, '')}${current.at ? `（${String(current.at).slice(0, 10)}）` : ''}`)
+            `● 最近新增：${String(current.name).replace(/\.md$/, '')}`)
           : '暂无社区动态'),
         h('div', { style: { display: 'grid', gap: '2px', ...mono, opacity: 0.7 } },
           ...items.map((item) => h('div', { key: item.name }, `· ${String(item.name).replace(/\.md$/, '')}`))),
