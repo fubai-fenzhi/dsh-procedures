@@ -1,6 +1,6 @@
 {
   "name": "dsh-procedures",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "type": "module",
   "description": "File-based experience cards for DSH and other agents: hit-triggered local hints solve mistakes in place — on a hit, roughly 83–90% fewer tokens — with a community card library you can pull from and contribute to. The resident hook costs about 440 tokens per turn; card bodies load on demand.",
   "license": "MIT",
