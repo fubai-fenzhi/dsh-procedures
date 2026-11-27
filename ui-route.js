@@ -1,6 +1,7 @@
 import { join } from 'node:path';
 
 import { contribute } from './lib/community.mjs';
+import { routeRejection } from './lib/guard.mjs';
 
 export const name = 'dsh-procedures-ui';
 export const inject = ['webServer', 'workingDirectory', 'agents'];
@@ -14,6 +15,15 @@ export function apply(ctx) {
     kind: 'exact',
     path: '/dsh-procedures/contribute/open',
     resource: async (request) => {
+      // Reading local cards and minting issues on the owner's behalf must pass the
+      // Connection Host/Origin and browser-authentication checks first.
+      const denied = routeRejection(ctx.get('connection'), request);
+      if (denied) {
+        return new Response(JSON.stringify({ error: '请求来源校验未通过' }), {
+          status: denied,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
       const url = new URL(request.url);
       let base = url.searchParams.get('dir') ?? '';
       if (!base) {
